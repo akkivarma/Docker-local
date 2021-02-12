@@ -1,4 +1,4 @@
-# Docker Dev
+# Docker-local
 
 Repository for Docker setup files to run projects locally in containers.
 
