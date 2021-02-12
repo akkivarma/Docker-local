@@ -1,0 +1,97 @@
+version: '3'
+
+networks:
+  dev:
+
+services:
+  apache:
+    build:
+      context: ./apache
+      dockerfile: apache.dockerfile
+    hostname: 'apache.container'
+    container_name: 'apache'
+    volumes: 
+      - ./www:/var/www/html/
+    environment: 
+      - PROJECT_DIR=/var/www/html
+    ports: 
+      - 80:80
+    depends_on:
+      - php_fpm
+    networks:
+      - dev
+
+  php_fpm:
+    build:
+      context: ./php-fpm
+      dockerfile: php.dockerfile
+    hostname: 'fpm.container'
+    container_name: 'fpm'
+    volumes: 
+      - ./www:/var/www/html/
+    ports:
+      - 9000:9000
+    depends_on: 
+      - redis
+    networks:
+      - dev
+
+  redis:
+    image: redis:6.0-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    hostname: 'redis.container'
+    container_name: 'redis'
+    ports:
+      - 6379:6379
+    networks:
+      - dev
+
+  # creating a service for npm, this will allow us
+  # to run npm commands on the docker setup
+  # the entrypoint config tells this container that
+  # whenever it is called it should run that command
+  # we will pass whatever options are needed from outside
+  npm:
+    image: node:12-alpine
+    container_name: npm
+    volumes:
+      - ./www:/var/www/html/
+    working_dir: /var/www/html/WEBPUSH-ADMIN
+    entrypoint: ['npm']
+
+  # same thing as above for running aglio renderer commands
+  aglio:
+    build:
+      context: ./aglio
+      dockerfile: aglio.dockerfile
+    container_name: 'aglio'
+    volumes: 
+      - ./www:/var/www/html/
+    working_dir: /var/www/html/WEBPUSH-API
+  
+  # same thing as above for running composer commands
+  composer:
+    image: composer:2
+    container_name: composer
+    volumes:
+      - ./www:/var/www/html/
+    depends_on:
+      - php_fpm
+    networks:
+      - dev
+    entrypoint: ['composer', '--ignore-platform-reqs']
+  
+  # same thing as above for running artisan commands
+  # we have specified the entrypoint as php artisan
+  artisan:
+    build:
+      context: ./php-fpm
+      dockerfile: ./php.dockerfile
+    container_name: artisan
+    volumes:
+      - ./www:/var/www/html/
+    depends_on:
+      - php_fpm
+    networks:
+      - dev
+    entrypoint: ['php', '/var/www/html/WEBPUSH-API/artisan']
