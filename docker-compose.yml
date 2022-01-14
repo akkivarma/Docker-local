@@ -56,18 +56,8 @@ services:
     container_name: npm
     volumes:
       - ./www:/var/www/html/
-    working_dir: /var/www/html/WEBPUSH-ADMIN
+    working_dir: /var/www/html/shoppr
     entrypoint: ['npm']
-
-  # same thing as above for running aglio renderer commands
-  aglio:
-    build:
-      context: ./aglio
-      dockerfile: aglio.dockerfile
-    container_name: 'aglio'
-    volumes: 
-      - ./www:/var/www/html/
-    working_dir: /var/www/html/WEBPUSH-API
   
   # same thing as above for running composer commands
   composer:
@@ -80,18 +70,4 @@ services:
     networks:
       - dev
     entrypoint: ['composer', '--ignore-platform-reqs']
-  
-  # same thing as above for running artisan commands
-  # we have specified the entrypoint as php artisan
-  artisan:
-    build:
-      context: ./php-fpm
-      dockerfile: ./php.dockerfile
-    container_name: artisan
-    volumes:
-      - ./www:/var/www/html/
-    depends_on:
-      - php_fpm
-    networks:
-      - dev
-    entrypoint: ['php', '/var/www/html/WEBPUSH-API/artisan']
+    
