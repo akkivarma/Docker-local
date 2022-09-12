@@ -58,3 +58,8 @@ Cannot use any IDE/Editor for coding unless it has support for WSL2. Try below E
 - [Docker Desktop WSL 2 backend](https://docs.docker.com/docker-for-windows/wsl/)
 - [Install Windows Subsystem for Linux (WSL) on Windows 10](https://docs.microsoft.com/en-us/windows/wsl/install-win10)
 - [Using WSL 2 with Visual Studio Code](https://code.visualstudio.com/blogs/2019/09/03/wsl2)
+
+
+### Infrastructure model
+
+![Infrastructure model](.infragenie/infrastructure_model.png)
